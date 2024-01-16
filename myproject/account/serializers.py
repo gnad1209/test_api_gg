@@ -30,19 +30,18 @@ class BlacklistedTokenSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class LogoutSerializers(serializers.ModelSerializer):
+class LogoutSerializers(serializers.Serializer):
     refresh = serializers.CharField()
 
     default_error_messages = {
-        'bad_token': ('Token is expried or invalid')
+        'bad_token': ('Token is invalid or expired')
     }
 
     def validate(self, attrs):
         self.token = attrs['refresh']
-
         return attrs
-    
-    def save(self,**kwargs):
+
+    def save(self, **kwargs):
         try:
             RefreshToken(self.token).blacklist()
         except TokenError:
