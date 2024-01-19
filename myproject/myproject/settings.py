@@ -27,10 +27,19 @@ SECRET_KEY = 'django-insecure-(m%e&6g7j=op1pp0u@s08mz4rr9suk_2q^$v+gfk&9!p^7#kmn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+#connect
+# ALLOWED_HOSTS = ['192.168.1.98','localhost']
 ALLOWED_HOSTS = []
 
+# CORS_ORIGIN_ALLOW_ALL = True
+
+# CORS_ORIGIN_WHITELIST = (
+#   'http://localhost:8000',
+# )
 
 # Application definition
+
+SITE_ID = 2
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -40,11 +49,31 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'account',
+    'corsheaders',#connect
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
-    'rest_framework.authtoken',
+    'rest_framework.authtoken',# pip i restframework
+    'django.contrib.sites',
+    'allauth', #pip install django-allauth
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'ggapi',
+    # 'login',
+    'products',
 ]
+
+SOSIALACCOUNT_PROVIDERS = {
+    "google":{
+        "SCOPE":[
+            "profile",
+            "email"
+        ],
+        "AUTH_PARAMS":{"access_type":"online"}
+    }
+}
+
+#connect
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -54,6 +83,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware',
+    #connect
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -82,8 +116,14 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "ggapi",
+        "USER": "gnad1209",
+        "PASSWORD": "gnad1209",
+        "HOST": "127.0.0.1",
+        "PORT": "5432",
+        # "ENGINE": "django.db.backends.sqlite3",
+        # "NAME": "mydatabase",
     }
 }
 
@@ -129,7 +169,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'account.CustomUser'
+# AUTH_USER_MODEL = 'login.CustomUser'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -161,7 +201,20 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
+DJSOER = {
+    'SERIALIZERS':{
+        'user_create': 'core.serializers.RegisterSerializer'
+    }
+}
 
+#api gg
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
